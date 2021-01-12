@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="refresh" content="60">
+    <title>CodeReady Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<div class="container-fluid">
+    {{ range $val := . }}
+        <div class="row" style="background-color: {{ if $val.Status.OK }} lightgreen {{ else }} indianred {{ end }}">
+            <div class="col-md-1 text-right align-self-center">
+                <img style="height: 40px" src="{{ $val.User.AvatarURL }}"/>
+            </div>
+            <div class="col-md-1 text-left align-self-center">
+                {{ $val.Base.Repo.Name }}
+            </div>
+            <div class="col-md-9 align-self-center">
+                <a target="_blank" style="color: black" href="{{ $val.HTMLURL}}">{{ $val.Title }}</a>
+                {{ range $label := $val.Labels }}
+                    <span class="badge badge-primary" style="font-weight: 100; color: black; background-color: #{{ $label.Color }}">{{ $label.Name }}</span>
+                {{ end }}
+            </div>
+            <div class="col-md-1 text-left align-self-center">
+                {{ $val.CreatedAt.Format "02 Jan" }}
+            </div>
+        </div>
+    {{ end}}
+</div>
+</body>
+</html>
