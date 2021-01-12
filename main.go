@@ -56,7 +56,7 @@ func run() error {
 			if err := worker(); err != nil {
 				log.Errorf(err.Error())
 			}
-			time.Sleep(10 * time.Minute)
+			time.Sleep(time.Minute)
 		}
 	}()
 
