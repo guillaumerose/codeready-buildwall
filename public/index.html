@@ -8,11 +8,22 @@
     <meta http-equiv="refresh" content="60">
     <title>CodeReady Dashboard</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .pending {
+            background-color: coral;
+        }
+        .failure {
+            background-color: indianred;
+        }
+        .ok {
+            background-color: lightgreen;
+        }
+    </style>
 </head>
 <body>
 <div class="container-fluid">
     {{ range $val := . }}
-        <div class="row" style="background-color: {{ if $val.Status.OK }} lightgreen {{ else }} indianred {{ end }}">
+        <div class="row {{ if gt $val.Status.Pendings 0 }}pending{{ else if gt $val.Status.Failures 0 }}failure{{ else }}ok{{ end }}">
             <div class="col-md-1 text-right align-self-center">
                 <img style="height: 40px" src="{{ $val.User.AvatarURL }}"/>
             </div>

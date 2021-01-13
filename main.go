@@ -37,7 +37,7 @@ type credentials struct {
 }
 
 type status struct {
-	OK       bool
+	Pendings int
 	Failures int
 	Total    int
 }
@@ -126,6 +126,7 @@ func worker() error {
 			}
 			total := 0
 			failures := 0
+			pendings := 0
 			seen := make(map[string]struct{})
 			for _, repoStatus := range statuses {
 				if strings.Contains(*repoStatus.Context, "centos") {
@@ -138,15 +139,18 @@ func worker() error {
 					continue
 				}
 				seen[*repoStatus.Context] = struct{}{}
-				if *repoStatus.State != "success" {
+				if *repoStatus.State == "failure" {
 					failures++
+				}
+				if *repoStatus.State == "pending" {
+					pendings++
 				}
 				total++
 			}
 			allPRs = append(allPRs, pullRequest{
 				PullRequest: *pr,
 				Status: status{
-					OK:       failures == 0,
+					Pendings: pendings,
 					Failures: failures,
 					Total:    total,
 				},
