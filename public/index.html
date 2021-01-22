@@ -22,7 +22,17 @@
 </head>
 <body>
 <div class="container-fluid">
-    {{ range $val := . }}
+    <div class="row" style="background-color: cornflowerblue; height: 40px">
+        <div class="col-md-1 text-right align-self-center">
+        </div>
+        <div class="col-md-1 align-self-center">
+            Last 30 days
+        </div>
+        <div class="col-md-10 align-self-center">
+            {{ index .Stats 3 }} users: {{ index .Stats 0 }} linux, {{ index .Stats 1 }} Windows, {{ index .Stats 2 }} macOS.
+        </div>
+    </div>
+    {{ range $val := .PullRequests }}
         <div class="row {{ if gt $val.Status.Pendings 0 }}pending{{ else if gt $val.Status.Failures 0 }}failure{{ else }}ok{{ end }}">
             <div class="col-md-1 text-right align-self-center">
                 <img style="height: 40px" src="{{ $val.User.AvatarURL }}"/>

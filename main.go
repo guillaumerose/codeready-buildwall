@@ -47,13 +47,27 @@ type pullRequest struct {
 	Status status `json:"status"`
 }
 
+type indexTemplate struct {
+	PullRequests []pullRequest
+	Stats        []float64
+}
+
+var stats []float64
 var pullRequestsByRepo = make(map[string][]pullRequest)
 var lock = sync.Mutex{}
 
 func run() error {
 	go func() {
 		for {
-			if err := worker(); err != nil {
+			if err := dayWorker(); err != nil {
+				log.Errorf(err.Error())
+			}
+			time.Sleep(24 * time.Hour)
+		}
+	}()
+	go func() {
+		for {
+			if err := minuteWorker(); err != nil {
 				log.Errorf(err.Error())
 			}
 			time.Sleep(time.Minute)
@@ -86,7 +100,10 @@ func run() error {
 			return err
 		}
 		var out bytes.Buffer
-		if err = t.Execute(&out, allPRs); err != nil {
+		if err = t.Execute(&out, indexTemplate{
+			PullRequests: allPRs,
+			Stats:        stats,
+		}); err != nil {
 			return err
 		}
 		return c.HTML(200, out.String())
@@ -94,7 +111,7 @@ func run() error {
 	return e.Start(":8080")
 }
 
-func worker() error {
+func minuteWorker() error {
 	var credentials credentials
 	bin, err := ioutil.ReadFile(os.ExpandEnv("$HOME/.config/hub"))
 	if err := yaml.Unmarshal(bin, &credentials); err != nil {
